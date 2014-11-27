@@ -3,6 +3,7 @@ package kr.co.tmon.util.clip.service;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.FlavorEvent;
 import java.awt.datatransfer.FlavorListener;
@@ -29,7 +30,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
-public class ClipService implements FlavorListener, RemoteClipListener {
+public class ClipService implements FlavorListener, RemoteClipListener, ClipboardOwner {
 
 	private static final int TIME_OUT_MILLIS = 5000;
 	private static final String CHANNEL_TYPE = "sftp";
@@ -76,6 +77,7 @@ public class ClipService implements FlavorListener, RemoteClipListener {
 
 	@Override
 	public void flavorsChanged(FlavorEvent event) {
+		System.out.println("로컬 이벤트 : " + event);
 		if (isRecursive) {
 			isRecursive = false;
 			return;
@@ -140,7 +142,7 @@ public class ClipService implements FlavorListener, RemoteClipListener {
 
 			isRecursive = true;
 
-			clipboard.setContents(contents, null);
+			clipboard.setContents(contents, this);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -157,7 +159,7 @@ public class ClipService implements FlavorListener, RemoteClipListener {
 		} else if (mediaType.startsWith("text")) {
 			String text = IOUtils.toString(channelInputStream, "UTF-8");
 			contents = new StringTransferable(text);
-			System.out.println("RemoteText // " + text);
+			System.out.println("RemoteText // " + text.length());
 		} else {
 			// TODO 예상치 못한 Remote Data Type 로그 남기기
 			printClipLog();
@@ -253,5 +255,14 @@ public class ClipService implements FlavorListener, RemoteClipListener {
 				}
 			});
 		}
+	}
+
+	@Override
+	public void lostOwnership(Clipboard clipboard, Transferable contents) {
+		System.out.println("========================");
+		System.out.println(clipboard);
+		System.out.println(contents);
+		System.out.println("========================");
+		System.out.println();
 	}
 }
