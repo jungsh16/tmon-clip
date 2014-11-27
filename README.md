@@ -5,13 +5,13 @@ Tmon Clip Share
 
 기능
   1. 일정 간격으로 클라이언트 정보를 IpMapServer에 등록 (하트비트)
-    A. [RelayService]
+    A. [ThreadServiceFactory]
       - [ClientInfo] : ID, Password, IP, Port
       - IP, Port : IpMapServer정보
-      - startHearBeatService() : 주기적으로(1분?) 하트비트를 보낼 수 있는 쓰레드 생성
-        > [HearBeatService]
-      - startEventReceiver() : 클립보드 갱신 이벤트를 수신할 수 있는 서버 쓰레드 생성
-        > [EventReceiver]
+      - getHeartBeatService() : 주기적으로(1분?) 하트비트를 보낼 수 있는 쓰레드 생성
+        > [HearBeatService]:[ThreadService]
+      - getEventReceiverService() : 클립보드 갱신 이벤트를 수신할 수 있는 서버 쓰레드 생성
+        > [EventReceiverService]:[ThreadService]
           >> [RemoteClipListener] 등록
   2. 시스템 클립보드 변경 이벤트 잡기 (LocalClipListener)
   3. 클립 보드의 내용을 ClipDataServer(sftp)에 저장
